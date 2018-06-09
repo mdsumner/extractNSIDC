@@ -85,7 +85,10 @@ dat$fullname <- files$fullname[findInterval(dat$date, files$date)]
 (rdummy <- raster(dat$fullname[1]))
 ## project the query points
 dat[c("X", "Y")] <- as_tibble(rgdal::project(as.matrix(dat[c("lon", "lat")]), projection(rdummy)))
-plot(rdummy, addfun = function() points(dat[c("X", "Y")]))
+png("raster-map.png")
+plot(crop(rdummy, extent(range(dat$X), range(dat$Y))+5e5), addfun = function() points(dat[c("X", "Y")]))
+dev.off()
+
 ## now, extract per file 
 dat2 <- purrr::map_df(split(dat, dat$fullname)[unique(dat$fullname)], 
            function(.x) {
